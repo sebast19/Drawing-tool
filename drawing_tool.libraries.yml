@@ -1,0 +1,9 @@
+drawing-library:
+  css:
+    theme:
+      css/style.css: {}
+  js:
+    js/drawing.js: {}
+  dependecies:
+    - core/jquery
+    - core/drupal  

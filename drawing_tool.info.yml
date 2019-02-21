@@ -1,0 +1,4 @@
+name: Drawing Tool
+description: A simple Drawing tool with Jquery and Rest Api
+core: 8.x 
+type: module

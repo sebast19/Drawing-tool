@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function drawing_tool_preprocess_html(&$variables) {
+
+	$nodestorage = \Drupal::entityTypeManager()->getStorage('node');
+	$nodes = $nodestorage->loadByProperties(['type' => 'draw']);
+
+	if($nodes) {
+
+		foreach($nodes as $node) {
+
+			// Info of size of canvas
+		  $canvas = $node->field_canvas_info->entity;
+
+		  // if canvas is TRUE save information
+		  if ($canvas) {
+		  	$canvas_data[$node->id()] = [
+			  	'height' => $canvas->field_hight_canvas->value,
+			  	'width' => $canvas->field_width_canvas->value,
+		  	];
+		  }
+
+		  foreach ($node->field_command as $command) {
+		  	if ($command) {
+		  		$basic_commands_data[$node->id()]['command'][] = $command->entity->field_choose_command->value;
+		  		$basic_commands_data[$node->id()]['value_x_1'][] = $command->entity->field_x_1->value;
+		  		$basic_commands_data[$node->id()]['value_x_2'][] = $command->entity->field_x_2->value;
+		  		$basic_commands_data[$node->id()]['value_y_1'][] = $command->entity->field_y_1->value;
+		  		$basic_commands_data[$node->id()]['value_y_2'][] = $command->entity->field_y_2->value;
+		  	}
+		  }
+
+		  foreach ($node->field_configs as $config) {
+		  	if ($config) {
+		  		$configs_data[$node->id()]['colour'] = $config->entity->field_colour->value;
+		  		$configs_data[$node->id()]['size'] = $config->entity->field_size->value;
+		  	}
+		  }
+
+		}
+
+	}
+
+	$variables['#attached']['library'][] = 'drawing_tool/drawing-library';
+	$variables['#attached']['drupalSettings']['drawing_tool']['canvas_data'] = isset($canvas_data) ? $canvas_data : NULL;
+	$variables['#attached']['drupalSettings']['drawing_tool']['basic_commands_data'] = isset($basic_commands_data) ? $basic_commands_data : NULL;
+	$variables['#attached']['drupalSettings']['drawing_tool']['configs'] = isset($configs_data) ? $configs_data : NULL;
+
+}
